@@ -70,7 +70,7 @@ defmodule LivePhone do
         data-masks={@masks}
         phx-target={@myself}
         phx-change="typing"
-        phx-debounce="300"
+        phx-debounce="blur"
         phx-blur="close"
       />
 
