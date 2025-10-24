@@ -70,7 +70,7 @@ defmodule LivePhone do
         placeholder={assigns[:placeholder] || get_placeholder(assigns[:country])}
         data-masks={@masks}
         phx-target={@myself}
-        phx-keyup="typing"
+        phx-change="typing"
         phx-blur="close"
         phx-debounce="500"
       />
@@ -128,8 +128,8 @@ defmodule LivePhone do
           Process.cancel_timer(socket.assigns.debounce_timer)
         end
 
-        # Start a new debounce timer
-        timer_ref = Process.send_after(self(), {:push_change, formatted_value}, 500)
+        # Start a new debounce timer with component ID
+        timer_ref = Process.send_after(self(), {:push_change, socket.assigns.id, formatted_value}, 500)
 
         assign(socket, :debounce_timer, timer_ref)
       else
