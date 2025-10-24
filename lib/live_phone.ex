@@ -72,8 +72,8 @@ defmodule LivePhone do
         placeholder={assigns[:placeholder] || get_placeholder(assigns[:country])}
         data-masks={@masks}
         phx-target={@myself}
-        phx-change="typing"
-        phx-debounce="blur"
+        phx-keyup="typing"
+        phx-debounce="300"
         phx-blur="close"
       />
 
@@ -153,8 +153,8 @@ defmodule LivePhone do
   end
 
   @impl true
-  def handle_event("typing", %{}, socket) do
-    {:noreply, set_value(socket, socket.assigns.value)}
+  def handle_event("typing", %{"value" => value}, socket) do
+    {:noreply, set_value(socket, value)}
   end
 
   def handle_event("select_country", %{"country" => country}, socket) do
@@ -181,23 +181,9 @@ defmodule LivePhone do
   end
 
   def handle_event("close", _, socket) do
-    Logger.debug("assigns: #{inspect(socket.assigns)}")
-    {_, formatted_value} = Util.normalize(socket.assigns.value, socket.assigns[:country])
-    valid? = Util.valid?(formatted_value)
-
-
-
-    # Logger.debug("payload: #{inspect(payload)}")
-    # Logger.debug("value: #{inspect(socket.assigns.value)}, formatted: #{inspect(formatted_value)}")
-
     socket =
       socket
       |> assign(:opened?, false)
-      |> assign(:valid?, valid?)
-      |> push_event("change", %{
-          id: "live_phone-#{socket.assigns.id}",
-          value: formatted_value
-        })
 
     {:noreply, socket}
   end
