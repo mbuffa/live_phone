@@ -187,7 +187,6 @@ defmodule LivePhone do
     {:noreply, assign(socket, :opened?, false)}
   end
 
-  @impl true
   def handle_info({:push_change, formatted_value}, socket) do
     {:noreply,
      socket
