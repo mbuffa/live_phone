@@ -129,7 +129,8 @@ defmodule LivePhone do
         end
 
         # Start a new debounce timer with component ID
-        timer_ref = Process.send_after(self(), {:push_change, socket.assigns.id, formatted_value}, 500)
+        timer_ref =
+          Process.send_after(self(), {:push_change, socket.assigns.id, formatted_value}, 500)
 
         assign(socket, :debounce_timer, timer_ref)
       else
@@ -156,10 +157,6 @@ defmodule LivePhone do
   end
 
   @impl true
-  def handle_event("typing", %{"value" => value}, socket) do
-    {:noreply, set_value(socket, value)}
-  end
-
   def handle_event("select_country", %{"country" => country}, socket) do
     valid? = Util.valid?(socket.assigns[:formatted_value])
 
@@ -185,6 +182,10 @@ defmodule LivePhone do
 
   def handle_event("close", _, socket) do
     {:noreply, assign(socket, :opened?, false)}
+  end
+
+  def handle_info("typing", %{"value" => value}, socket) do
+    {:noreply, set_value(socket, value)}
   end
 
   def handle_info({:push_change, formatted_value}, socket) do
