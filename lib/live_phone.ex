@@ -65,6 +65,7 @@ defmodule LivePhone do
 
       <input
         type="tel"
+        name={"#{@id}_display"}
         class={assigns[:input_class]}
         value={assigns[:value]}
         tabindex={assigns[:tabindex]}
