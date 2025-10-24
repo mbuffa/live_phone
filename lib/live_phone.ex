@@ -69,8 +69,9 @@ defmodule LivePhone do
         placeholder={assigns[:placeholder] || get_placeholder(assigns[:country])}
         data-masks={@masks}
         phx-target={@myself}
-        phx-keyup="typing"
+        phx-change="typing"
         phx-blur="close"
+        phx-debounce="500"
       />
 
       <%= hidden_input(
