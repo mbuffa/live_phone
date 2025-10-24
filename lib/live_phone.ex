@@ -75,6 +75,7 @@ defmodule LivePhone do
         phx-change="typing"
         phx-debounce="blur"
         phx-blur="close"
+        phx-value-phone={assigns[:value]}
       />
 
       <%= hidden_input(
