@@ -21,7 +21,8 @@ defmodule LivePhone do
      |> assign_new(:value, fn -> "" end)
      |> assign_new(:opened?, fn -> false end)
      |> assign_new(:valid?, fn -> false end)
-     |> assign_new(:input_class, fn -> "live_phone-input" end)}
+     |> assign_new(:input_class, fn -> "live_phone-input" end)
+     |> assign_new(:debounce_timer, fn -> nil end)}
   end
 
   @impl true
@@ -69,7 +70,7 @@ defmodule LivePhone do
         placeholder={assigns[:placeholder] || get_placeholder(assigns[:country])}
         data-masks={@masks}
         phx-target={@myself}
-        phx-change="typing"
+        phx-keyup="typing"
         phx-blur="close"
         phx-debounce="500"
       />
@@ -122,10 +123,15 @@ defmodule LivePhone do
     |> assign(:formatted_value, formatted_value)
     |> then(fn socket ->
       if push? do
-        push_event(socket, "change", %{
-          id: "live_phone-#{socket.assigns.id}",
-          value: formatted_value
-        })
+        # Cancel any existing debounce timer
+        if socket.assigns.debounce_timer do
+          Process.cancel_timer(socket.assigns.debounce_timer)
+        end
+
+        # Start a new debounce timer
+        timer_ref = Process.send_after(self(), {:push_change, formatted_value}, 500)
+
+        assign(socket, :debounce_timer, timer_ref)
       else
         socket
       end
@@ -179,6 +185,17 @@ defmodule LivePhone do
 
   def handle_event("close", _, socket) do
     {:noreply, assign(socket, :opened?, false)}
+  end
+
+  @impl true
+  def handle_info({:push_change, formatted_value}, socket) do
+    {:noreply,
+     socket
+     |> assign(:debounce_timer, nil)
+     |> push_event("change", %{
+       id: "live_phone-#{socket.assigns.id}",
+       value: formatted_value
+     })}
   end
 
   @spec get_placeholder(String.t()) :: String.t()
