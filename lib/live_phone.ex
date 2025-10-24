@@ -52,7 +52,6 @@ defmodule LivePhone do
       class={"live_phone #{if @valid?, do: "live_phone-valid"}"}
       id={"live_phone-#{@id}"}
       phx-hook="LivePhone"
-      phx-update="ignore"
     >
       <.country_selector
         tabindex={@tabindex}
