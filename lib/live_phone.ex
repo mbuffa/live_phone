@@ -11,6 +11,8 @@ defmodule LivePhone do
   alias Phoenix.LiveView.Socket
   alias LivePhone.{Country, Util}
 
+  require Logger
+
   @impl true
   def mount(socket) do
     {:ok,
@@ -180,6 +182,8 @@ defmodule LivePhone do
   def handle_event("close", _, socket) do
     {_, formatted_value} = Util.normalize(socket.assigns.value, socket.assigns[:country])
     valid? = Util.valid?(formatted_value)
+
+    Logger.debug("value: #{inspect(socket.assigns.value)}, formatted: #{inspect(formatted_value)}")
 
     socket =
       socket
