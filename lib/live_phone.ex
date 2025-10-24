@@ -179,10 +179,11 @@ defmodule LivePhone do
     {:noreply, assign(socket, :opened?, socket.assigns.opened? != true)}
   end
 
-  def handle_event("close", _, socket) do
+  def handle_event("close", payload, socket) do
     {_, formatted_value} = Util.normalize(socket.assigns.value, socket.assigns[:country])
     valid? = Util.valid?(formatted_value)
 
+    Logger.debug("payload: #{inspect(payload)}")
     Logger.debug("value: #{inspect(socket.assigns.value)}, formatted: #{inspect(formatted_value)}")
 
     socket =
