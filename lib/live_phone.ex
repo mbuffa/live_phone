@@ -185,6 +185,10 @@ defmodule LivePhone do
       socket
       |> assign(:opened?, false)
       |> assign(:valid?, valid?)
+      |> push_event("change", %{
+          id: "live_phone-#{socket.assigns.id}",
+          value: formatted_value
+        })
 
     {:noreply, socket}
   end
