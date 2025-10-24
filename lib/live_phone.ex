@@ -151,9 +151,8 @@ defmodule LivePhone do
   end
 
   @impl true
-  def handle_event("typing", %{"value" => value}, socket) do
-    IO.puts "TYPING?"
-    {:noreply, set_value(socket, value)}
+  def handle_event("typing", %{}, socket) do
+    {:noreply, set_value(socket, socket.assigns.value)}
   end
 
   def handle_event("select_country", %{"country" => country}, socket) do
