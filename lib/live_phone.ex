@@ -178,7 +178,15 @@ defmodule LivePhone do
   end
 
   def handle_event("close", _, socket) do
-    {:noreply, assign(socket, :opened?, false)}
+    {_, formatted_value} = Util.normalize(socket.assigns.value, socket.assigns[:country])
+    valid? = Util.valid?(formatted_value)
+
+    socket =
+      socket
+      |> assign(:opened?, false)
+      |> assign(:valid?, valid?)
+
+    {:noreply, socket}
   end
 
   @spec get_placeholder(String.t()) :: String.t()
